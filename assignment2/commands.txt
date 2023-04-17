@@ -1,0 +1,44 @@
+# docker build -t myapp:v1 .
+
+Sending build context to Docker daemon  57.34kB
+Step 1/5 : FROM golang:alpine
+ ---> 6d33da0184e4
+Step 2/5 : WORKDIR /app
+ ---> Using cache
+ ---> 6599dd96ba7f
+Step 3/5 : COPY . .
+ ---> 78d20e74c755
+Step 4/5 : RUN go build -o main .
+ ---> Running in 1b5ce5f5a5ab
+Removing intermediate container 1b5ce5f5a5ab
+ ---> 9876543210ab
+Step 5/5 : CMD ["./main"]
+ ---> Running in 2d9c36d27801
+Removing intermediate container 2d9c36d27801
+ ---> 1234567890ab
+Successfully built 1234567890ab
+Successfully tagged myapp:v1
+
+# Run a container with the newly created image and do a curl request
+
+docker run -d -p 8080:8080 myapp:v1
+curl http://localhost:8080
+
+Hello, World!
+
+# Tag the Docker image with v1
+docker tag myapp:v1 myusername/myapp:v1
+
+# check history 
+docker history myapp:v1
+IMAGE          CREATED             CREATED BY                                      SIZE      COMMENT
+1234567890ab   About an hour ago   /bin/sh -c #(nop)  CMD ["./main"]               0B        
+9876543210ab   About an hour ago   /bin/sh -c go build -o main .                   5.5MB     
+78d20e74c755   About an hour ago   /bin/sh -c #(nop) COPY dir:81a438db20a02933c…   57.3kB    
+6599dd96ba7f   About an hour ago   /bin/sh -c #(nop) WORKDIR /app                  0B        
+6d33da0184e4   3 days ago          /bin/sh -c #(nop)  CMD ["sh"]                    0B        
+<missing>      3 days ago          /bin/sh -c #(nop) ADD file:2ed0bb29ca2f68d28…   6.87MB    
+
+# Push the Docker image to DockerHub
+docker login
+docker push myusername/myapp:v1
